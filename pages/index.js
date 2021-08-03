@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import firebase from "firebase/app";
 import config from "../config";
 import "firebase/auth";
@@ -17,13 +17,6 @@ import Icon from '../components/icon';
 import PopUp from '../components/popup';
 
 const Home = () => {
-
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      firebase.auth();
-      firebase.database();
-    }
-  }, [])
 
   const [showPopUp, setShowPopUp] = useState(false);
   const [selectIcon, setSelectIcon] = useState(null);
