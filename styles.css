@@ -1,0 +1,10 @@
+.icon .svg-container svg {
+    margin: 0 auto;
+}
+
+.lottie-container .lf-player-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
