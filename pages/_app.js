@@ -5,12 +5,12 @@ import { auth, database } from '../utils/firebase';
 
 function MyApp({ Component, pageProps }) {
 
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      auth();
-      database();
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (process.env.NODE_ENV === 'production') {
+  //     auth();
+  //     database();
+  //   }
+  // }, [])
 
   return <Component {...pageProps} />
 }
