@@ -71,11 +71,15 @@ const Home = () => {
                         value={code}
                         onButtonClick={onClickIcon}
                       />
+                    } else {
+                      return <div />
                     }
                   });
                 }}
               </FirebaseDatabaseNode>
-              {canAdd && <Add />}
+              <>
+                {canAdd && <Add />}
+              </>
             </FirebaseDatabaseProvider>
 
           </section>
