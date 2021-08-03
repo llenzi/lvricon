@@ -22,6 +22,8 @@ const DynamicComponentWithNoSSR = dynamic(
     import('firebase/app');
     import('firebase/auth');
     import('firebase/database');
+    import('@react-firebase/auth');
+    import('@react-firebase/database');
   },
   { ssr: false }
 )
