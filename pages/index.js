@@ -15,6 +15,7 @@ import Footer from '../components/footer';
 import Header from '../components/header';
 import Icon from '../components/icon';
 import PopUp from '../components/popup';
+import Add from '../components/add';
 
 const Home = () => {
 
@@ -51,24 +52,30 @@ const Home = () => {
               <FirebaseDatabaseNode
                 path="icons/"
                 orderByKey
-                limitToFirst={3}
               // orderByValue={"created_on"}
               >
                 {({ value }) => {
                   if (value === null || typeof value === "undefined") return null;
                   const keys = Object.keys(value);
                   const values = Object.values(value);
-                  return values.map((val, i) => (
-                    <Icon
-                      key={keys[i]}
-                      name={keys[i]}
-                      value={val}
-                      onButtonClick={onClickIcon}
-                    />
-                  ));
+                  console.log({ keys, values });
+                  // return <div />
+                  return values.map((val, i) => {
+                    const { name, code } = val || {}
+                    if (!!name) {
+                      return <Icon
+                        key={name}
+                        name={name}
+                        value={code}
+                        onButtonClick={onClickIcon}
+                      />
+                    }
+                  });
                 }}
               </FirebaseDatabaseNode>
+              <Add />
             </FirebaseDatabaseProvider>
+
           </section>
           <Footer />
 

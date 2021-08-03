@@ -22,6 +22,7 @@ const Icon = props => {
     const classPreview = isFull ? 'm-2 flex flex-row justify-between' : 'm-2';
     const classTitle = cn('name p-2 bg-white border-b border-gray-300 rounded-t flex justify-center', {'justify-center': !isFull, 'justify-between' : isFull});
     const valueHTML = value.replace('fill="#000000"', 'fill="@fill@"');
+    const valueColor = value.replace('@fill@', '#000000');
     // const [showHTML, setShowHTML] = useState(false);
 
     return <div className={classContainer}>
@@ -31,7 +32,7 @@ const Icon = props => {
         </div>
         <div className={classPreview}>
             <div>
-                <div className="m-2 svg-container" key={name} dangerouslySetInnerHTML={{ __html: value }} />
+                <div className="m-2 svg-container" key={name} dangerouslySetInnerHTML={{ __html: valueColor }} />
                 {isFull && <div>
                     <button onClick={() => { _onCopyClick(valueHTML) }} className="px-10 py-2 border rounded text-white border-gray-900 bg-gray-800 text-sm">
                         Copy HTML
