@@ -22,6 +22,8 @@ const Home = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [selectIcon, setSelectIcon] = useState(null);
 
+  const canAdd = false;
+
   const onClickIcon = ({ name, value }) => {
     setShowPopUp(true);
     setSelectIcon({ name, value })
@@ -73,7 +75,7 @@ const Home = () => {
                   });
                 }}
               </FirebaseDatabaseNode>
-              <Add />
+              {canAdd && <Add />}
             </FirebaseDatabaseProvider>
 
           </section>
