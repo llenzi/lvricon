@@ -19,8 +19,9 @@ import PopUp from '../components/popup';
 
 const DynamicComponentWithNoSSR = dynamic(
   () => {
-    import('../firebase/auth');
-    import('../firebase/database');
+    import('firebase/app');
+    import('firebase/auth');
+    import('firebase/database');
   },
   { ssr: false }
 )
