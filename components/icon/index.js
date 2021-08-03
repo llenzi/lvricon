@@ -20,12 +20,13 @@ const Icon = props => {
     const isFull = layout === 'full';
     const classContainer = isFull ? `icon icon-${name} icon-view mx-auto h-80 w-6/12 bg-white rounded border border-color-grey p-0 shadow overflow-y-auto` : `icon icon-${name} icon-view flex flex-col bg-gray-50 rounded m-4 align-middle justify-between border border-gray-300 text-center w-2/12 h-40`
     const classPreview = isFull ? 'm-2 flex flex-row justify-between' : 'm-2';
+    const classTitle = cn('name p-2 bg-white border-b border-gray-300 rounded-t flex justify-center', {'justify-center': !isFull, 'justify-between' : isFull});
     const valueHTML = value.replace('fill="#000000"', 'fill="@fill@"');
     // const [showHTML, setShowHTML] = useState(false);
 
     return <div className={classContainer}>
-        <div className="name p-2 bg-white border-b border-gray-300 rounded-t flex justify-between">
-            <div>{name}</div>
+        <div className={classTitle}>
+            <h4 className="font-medium">{name}</h4>
             {isFull && <button onClick={_onClose} className="px-2 py-1 border rounded-full text-xs">✕</button>}
         </div>
         <div className={classPreview}>
