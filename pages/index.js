@@ -1,12 +1,13 @@
 import Head from 'next/head'
+import dynamic from 'next/dynamic'
 import { useState } from 'react';
 import firebase from "firebase/app";
 import config from "../config";
 import "firebase/auth";
+import "firebase/database";
 import {
   FirebaseAuthProvider,
 } from "@react-firebase/auth";
-import "firebase/database";
 import {
   FirebaseDatabaseProvider,
   FirebaseDatabaseNode
@@ -15,6 +16,14 @@ import Footer from '../components/footer';
 import Header from '../components/header';
 import Icon from '../components/icon';
 import PopUp from '../components/popup';
+
+const DynamicComponentWithNoSSR = dynamic(
+  () => {
+    import('../firebase/auth');
+    import('../firebase/database');
+  },
+  { ssr: false }
+)
 
 const Home = () => {
   const [showPopUp, setShowPopUp] = useState(false);
@@ -29,6 +38,7 @@ const Home = () => {
     <FirebaseAuthProvider firebase={firebase} {...config}>
       <>
         <Head />
+        <DynamicComponentWithNoSSR />
         {showPopUp && <PopUp>
           <div className="absolute rounded inset-0 flex flex-col align-middle justify-center content-center h-full">
             <Icon
