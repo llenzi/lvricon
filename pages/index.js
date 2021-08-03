@@ -37,7 +37,6 @@ const Home = () => {
     <FirebaseAuthProvider firebase={firebase} {...config}>
       <>
         <Head />
-        <DynamicComponentWithNoSSR />
         {showPopUp && <PopUp>
           <div className="absolute rounded inset-0 flex flex-col align-middle justify-center content-center h-full">
             <Icon
