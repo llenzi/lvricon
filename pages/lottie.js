@@ -28,7 +28,10 @@ const Lottie = () => {
     return (
         <FirebaseAuthProvider firebase={firebase} {...config}>
             <>
-                <Head />
+                <Head>
+                    <title>LVR Icon Viewer - Lottie</title>
+                    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                </Head>
                 {showPopUp && <PopUp>
                     <div className="absolute rounded inset-0 flex flex-col align-middle justify-center content-center h-full">
                         <LottiePlayer

@@ -29,9 +29,13 @@ const Home = () => {
   return (
     <FirebaseAuthProvider firebase={firebase} {...config}>
       <>
-        <Head />
+        <Head>
+          <title>LVR Icon Viewer</title>
+          <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        </Head>
         {showPopUp && <PopUp>
-          <div className="absolute rounded inset-0 flex flex-col align-middle justify-center content-center h-full">
+          <div className="overlay h-full w-full bg-black opacity-50 absolute inset-0 z-20"></div>
+          <div className="absolute rounded inset-0 flex flex-col align-middle justify-center content-center h-full z-30">
             <Icon
               onClose={() => { setShowPopUp(false); }}
               layout='full'
