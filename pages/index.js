@@ -1,6 +1,5 @@
 import Head from 'next/head'
-import dynamic from 'next/dynamic'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import firebase from "firebase/app";
 import config from "../config";
 import "firebase/auth";
@@ -17,18 +16,15 @@ import Header from '../components/header';
 import Icon from '../components/icon';
 import PopUp from '../components/popup';
 
-const DynamicComponentWithNoSSR = dynamic(
-  () => {
-    import('firebase/app');
-    import('firebase/auth');
-    import('firebase/database');
-    import('@react-firebase/auth');
-    import('@react-firebase/database');
-  },
-  { ssr: false }
-)
-
 const Home = () => {
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      firebase.auth();
+      firebase.database();
+    }
+  }, [])
+
   const [showPopUp, setShowPopUp] = useState(false);
   const [selectIcon, setSelectIcon] = useState(null);
 
