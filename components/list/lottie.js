@@ -8,11 +8,11 @@ import {
     FirebaseDatabaseProvider,
     FirebaseDatabaseNode
 } from "@react-firebase/database";
-import Add from '@/components/add';
-import Icon from "@/components/icon";
+import AddLottie from '@/components/add/addLottie';
 import PopUp from "@/components/popup";
+import LottiePlayer from '@/components/lottie';
 
-const ListIcons = props => {
+const ListLottie = props => {
     const { canAdd } = props;
 
     const [showPopUp, setShowPopUp] = useState(false);
@@ -36,7 +36,7 @@ const ListIcons = props => {
             return (
                 <section className="flex flex-row flex-wrap justify-center">
                     {showPopUp && <PopUp>
-                        <Icon
+                        <LottiePlayer
                             onClose={() => { setShowPopUp(false); }}
                             layout='full'
                             name={selectIcon.name}
@@ -46,8 +46,9 @@ const ListIcons = props => {
                     {isSignedIn && <>
                         <FirebaseDatabaseProvider firebase={firebase} {...config}>
                             <FirebaseDatabaseNode
-                                path="icons/"
+                                path="lottie/"
                                 orderByKey
+                                limitToFirst={3}
                             // orderByValue={"created_on"}
                             >
                                 {({ value }) => {
@@ -55,11 +56,12 @@ const ListIcons = props => {
                                     const keys = Object.keys(value);
                                     const values = Object.values(value);
                                     console.log({ keys, values });
-                                    // return <div />
+                                    // const values = Object.values(value);
+                                    // console.log(JSON.stringify({ value }, null, 2));
                                     return values.map((val, i) => {
                                         const { name, code } = val || {}
                                         if (!!name) {
-                                            return <Icon
+                                            return <LottiePlayer
                                                 iconId={keys[i]}
                                                 key={name}
                                                 name={name}
@@ -73,7 +75,7 @@ const ListIcons = props => {
                                     });
                                 }}
                             </FirebaseDatabaseNode>
-                            <>{canAdd && <Add />}</>
+                            <>{canAdd && <AddLottie />}</>
                         </FirebaseDatabaseProvider>
                     </>}
                     {!isSignedIn && <>
@@ -87,4 +89,4 @@ const ListIcons = props => {
     </IfFirebaseAuthedAnd>
 }
 
-export default ListIcons;
+export default ListLottie;

@@ -1,13 +1,13 @@
 import Head from 'next/head'
 import firebase from "firebase/app";
-import config from "../config";
+import config from "../../config";
 import "firebase/auth";
 import {
     FirebaseAuthProvider,
 } from "@react-firebase/auth";
 import "firebase/database";
-import Footer from '../components/footer';
-import Header from '../components/header';
+import Footer from '@/components/footer';
+import Header from '@/components/header';
 import ListLottie from '@/components/list/lottie';
 
 const Lottie = () => {
@@ -22,7 +22,7 @@ const Lottie = () => {
         </Head>
         <div className="mx-auto">
           <Header />
-          <ListLottie canAdd={false} />
+          <ListLottie canAdd={true} />
           <Footer />
         </div>
       </>

@@ -5,7 +5,7 @@ import {
 } from "@react-firebase/database";
 
 const Icon = props => {
-    const { name, value, onButtonClick, onClose, layout, isEdit, onDeleteClick, iconId } = props;
+    const { name, value, onButtonClick, onClose, layout, isEdit, iconId } = props;
 
     const _onClose = () => {
         onClose()
@@ -21,7 +21,7 @@ const Icon = props => {
     }
 
     const isFull = layout === 'full';
-    const classContainer = isFull ? `icon icon-${name} icon-view mx-auto h-80 w-6/12 bg-white rounded border border-color-grey p-0 shadow overflow-y-auto` : `icon icon-${name} icon-view flex flex-col bg-gray-50 rounded m-4 align-middle justify-between border border-gray-900 text-center w-6/12 sm:w-4/12 lg:w-/12 xl:w-2/12 h-40`
+    const classContainer = isFull ? `icon icon-${name} icon-view mx-auto h-80 w-6/12 bg-white rounded border border-color-grey p-0 shadow overflow-y-auto` : `icon icon-${name} icon-view flex flex-col bg-gray-300 rounded m-4 align-middle justify-between border border-gray-900 text-center w-6/12 sm:w-4/12 lg:w-/12 xl:w-2/12 h-40`
     const classPreview = isFull ? 'm-2 flex flex-row justify-between' : 'm-2';
     const classTitle = cn('name p-2 bg-white border-b border-gray-900 rounded-t flex', { 'justify-center': !isFull, 'justify-between': isFull });
     const valueHTML = value.replace('fill="#000000"', 'fill="@fill@"');

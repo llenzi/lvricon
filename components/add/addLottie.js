@@ -4,9 +4,8 @@ import "firebase/database";
 import { FirebaseDatabaseMutation } from "@react-firebase/database";
 import { useDropzone } from 'react-dropzone';
 
-const Add = props => {
+const AddLottie = props => {
     const newNameTextFieldRef = useRef(null);
-    const newSGVTextFieldRef = useRef(null);
     const newSVGObjectRef = useRef(null);
     const [files, setFiles] = useState([]);
 
@@ -14,12 +13,13 @@ const Add = props => {
         getRootProps,
         getInputProps
     } = useDropzone({
-        accept: 'image/svg+xml',
+        accept: 'application/json',
         onDrop: acceptedFiles => {
             setFiles(acceptedFiles.map(file => {
                 console.log({ file, url: URL.createObjectURL(file), filename: file.name });
-                const fileName = file.name.replace('.svg', '');
+                const fileName = file.name.replace('.json', '');
                 console.log({ fileName });
+                window.filexx = file;
                 return Object.assign(file, {
                     preview: URL.createObjectURL(file),
                     fileName: fileName
@@ -44,9 +44,9 @@ const Add = props => {
                         value={fileName}
                         ref={newNameTextFieldRef} />
                 </div>
-                <aside className="h-full flex flex-col justify-center">
-                    <div className="mx-auto my-2">
-                        <object ref={newSVGObjectRef} className="uploadSVG mx-auto" id={fileName} data={preview} type="image/svg+xml" />
+                <aside className="h-full flex flex-col justify-center overflow-x-hidden">
+                    <div className="mx-auto m-0 w-full">
+                        <object ref={newSVGObjectRef} className="uploadSVG mx-auto w-full p-2 mb-4 -mt-4 overflow-y-hidden" id={fileName} data={preview} type="application/json" />
                     </div>
                 </aside>
             </div>
@@ -68,26 +68,25 @@ const Add = props => {
             <p>Drag 'n' drop some files here, or click to select files</p>
         </div>}
         {thumbs && <>{thumbs}</>}
-        <FirebaseDatabaseMutation type="push" path="icons">
+        <FirebaseDatabaseMutation type="push" path="lottie">
             {({ runMutation }) => (
                 <form
                     onSubmit={async ev => {
                         ev.preventDefault();
                         // console.log({name: newNameTextFieldRef.current.value, svg: newSGVTextFieldRef.current.value});
                         const newName = newNameTextFieldRef.current.value;
-                        // let newSVG = newSGVTextFieldRef.current.value;
-                        window.xsxs = newSVGObjectRef.current;
-                        let newSVG = newSVGObjectRef.current.contentDocument.rootElement.outerHTML;
-                        console.log({ newSVGObjectRef, contentDoc: newSVGObjectRef.current.contentDocument.rootElement.outerHTML });
-                        newSVG = newSVG.replaceAll('path-1', `path-${newName}`);
-                        console.log({ newSVG });
-                        const { key } = await runMutation({
+                        // window.xsxs = newSVGObjectRef.current;
+                        console.log({ newName });
+                        const newJSON = document.querySelector(`#${newName}`).contentDocument.querySelector('pre').textContent;
+                        console.log({ newJSON });
+
+                        await runMutation({
                             name: newName,
-                            code: newSVG,
+                            code: newJSON,
                             created_at: firebase.database.ServerValue.TIMESTAMP,
                             updated_at: firebase.database.ServerValue.TIMESTAMP
                         });
-                        console.log({ key });
+
                         newNameTextFieldRef.current.value = "";
                         newSVGObjectRef.current.value = "";
                         setFiles([]);
@@ -110,4 +109,4 @@ const Add = props => {
     </div>;
 }
 
-export default Add;
+export default AddLottie;
