@@ -2,8 +2,9 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import {
     FirebaseAuthConsumer,
+    IfFirebaseAuthedAnd
 } from "@react-firebase/auth";
-import Menu from '../menu';
+import Menu from '@/components/menu';
 import UserMenu from "./userMenu";
 import Image from 'next/image';
 import lvr from '../../public/lvr.svg';
@@ -23,8 +24,13 @@ const Header = props => {
             <Menu />
         </div>
         <div className="flex-grow-0 signin flex content-center">
-            <FirebaseAuthConsumer>
-                {({ isSignedIn, user, providerId }) => {
+            <FirebaseAuthConsumer
+                filter={({ user }) => {
+                    if (!user.email) { return false; }
+                    return (providerId !== "anonymous" && user.email.indexOf("@luisaviaroma.com") > -1);
+                }}
+            >
+                {({ isSignedIn, user }) => {
                     console.log({ user });
                     return (
                         <>

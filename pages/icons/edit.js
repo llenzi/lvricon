@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import firebase from "firebase/app";
-import config from "../config";
+import config from "../../config";
 import "firebase/auth";
 import "firebase/database";
 import {
@@ -13,7 +13,6 @@ import ListIcons from '@/components/list/icons';
 
 const Home = () => {
 
-
   return (
     <FirebaseAuthProvider firebase={firebase} {...config}>
       <>
@@ -23,7 +22,7 @@ const Home = () => {
         </Head>
         <div className="mx-auto">
           <Header />
-          <ListIcons canAdd={false} />
+          <ListIcons canAdd={true} />
           <Footer />
 
         </div>
