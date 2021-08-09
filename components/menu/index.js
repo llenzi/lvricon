@@ -3,7 +3,7 @@ import ActiveLink from './activelink';
 const Menu = () => {
 
   const links = [
-    { name: 'Icons', path: '/' },
+    { name: 'Icons', path: '/icons' },
     { name: 'Lottie', path: '/lottie' }
   ]
 

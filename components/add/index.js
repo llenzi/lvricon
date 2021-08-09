@@ -63,7 +63,7 @@ const Add = props => {
     return <div
         className="add flex flex-col bg-gray-50 rounded m-4 align-middle justify-between border border-gray-300 text-center w-2/12 h-auto"
     >
-        {!thumbs.length && <div {...getRootProps({ className: 'dropzone m-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md' })}>
+        {!thumbs.length && <div {...getRootProps({ className: 'dropzone m-1 flex flex-col justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md h-full content-center' })}>
             <input {...getInputProps()} />
             <p>Drag 'n' drop some files here, or click to select files</p>
         </div>}
@@ -81,16 +81,16 @@ const Add = props => {
                         console.log({ newSVGObjectRef, contentDoc: newSVGObjectRef.current.contentDocument.rootElement.outerHTML });
                         newSVG = newSVG.replaceAll('path-1', `path-${newName}`);
                         console.log({ newSVG });
-                        const { key } = await runMutation({
-                            name: newName,
-                            code: newSVG,
-                            created_at: firebase.database.ServerValue.TIMESTAMP,
-                            updated_at: firebase.database.ServerValue.TIMESTAMP
-                        });
-                        console.log({ key });
-                        newNameTextFieldRef.current.value = "";
-                        newSVGObjectRef.current.value = "";
-                        setFiles([]);
+                        // const { key } = await runMutation({
+                        //     name: newName,
+                        //     code: newSVG,
+                        //     created_at: firebase.database.ServerValue.TIMESTAMP,
+                        //     updated_at: firebase.database.ServerValue.TIMESTAMP
+                        // });
+                        // console.log({ key });
+                        // newNameTextFieldRef.current.value = "";
+                        // newSVGObjectRef.current.value = "";
+                        // setFiles([]);
                     }}
                 >
                     <div>

@@ -63,7 +63,7 @@ const AddLottie = props => {
     return <div
         className="add flex flex-col bg-gray-50 rounded m-4 align-middle justify-between border border-gray-300 text-center w-2/12 h-auto"
     >
-        {!thumbs.length && <div {...getRootProps({ className: 'dropzone m-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md' })}>
+        {!thumbs.length && <div {...getRootProps({ className: 'dropzone m-1 flex flex-col justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md h-full content-center' })}>
             <input {...getInputProps()} />
             <p>Drag 'n' drop some files here, or click to select files</p>
         </div>}
@@ -76,9 +76,9 @@ const AddLottie = props => {
                         // console.log({name: newNameTextFieldRef.current.value, svg: newSGVTextFieldRef.current.value});
                         const newName = newNameTextFieldRef.current.value;
                         // window.xsxs = newSVGObjectRef.current;
-                        console.log({ newName });
+                        // console.log({ newName });
                         const newJSON = document.querySelector(`#${newName}`).contentDocument.querySelector('pre').textContent;
-                        console.log({ newJSON });
+                        // console.log({ newJSON });
 
                         await runMutation({
                             name: newName,
