@@ -1,14 +1,18 @@
 import { useRef, useState, useEffect } from "react";
-import firebase from "firebase/app";
+// import firebase from "firebase/app";
 import "firebase/database";
 import { FirebaseDatabaseMutation } from "@react-firebase/database";
 import { useDropzone } from 'react-dropzone';
+import Notification from "@/components/popup/notification";
 
 const Add = props => {
     const newNameTextFieldRef = useRef(null);
-    const newSGVTextFieldRef = useRef(null);
+    // const newSGVTextFieldRef = useRef(null);
     const newSVGObjectRef = useRef(null);
     const [files, setFiles] = useState([]);
+
+    const [showPopUp, setShowPopUp] = useState(false);
+    const [error, setError] = useState([]);
 
     const {
         getRootProps,
@@ -17,9 +21,9 @@ const Add = props => {
         accept: 'image/svg+xml',
         onDrop: acceptedFiles => {
             setFiles(acceptedFiles.map(file => {
-                console.log({ file, url: URL.createObjectURL(file), filename: file.name });
+                // console.log({ file, url: URL.createObjectURL(file), filename: file.name });
                 const fileName = file.name.replace('.svg', '');
-                console.log({ fileName });
+                // console.log({ fileName });
                 return Object.assign(file, {
                     preview: URL.createObjectURL(file),
                     fileName: fileName
@@ -30,9 +34,21 @@ const Add = props => {
 
     const thumbs = files.map(file => {
         const { preview, fileName, name } = file;
-        // console.log({ file, fileName: file.name, preview: file.preview })
+        console.log({ error });
         return (
             <div key={name}>
+                {showPopUp && <Notification
+                    title="Attenzione"
+                    errors={[...new Set(error)]}
+                    text="sono stati riscontrati i seguenti errori e il caricamento non verrà effettuato (si consiglia di vedere gli altri SVG come sono stati realizzati):"
+                    type="warning"
+                    onClose={() => { 
+                        newNameTextFieldRef.current.value = "";
+                        newSVGObjectRef.current.value = "";
+                        setFiles([]);
+                        setShowPopUp(false);
+                    }}
+                />}
                 <div className="name p-2 bg-white border-b border-gray-300 rounded-t flex justify-center">
                     <input
                         readOnly
@@ -78,19 +94,43 @@ const Add = props => {
                         // let newSVG = newSGVTextFieldRef.current.value;
                         window.xsxs = newSVGObjectRef.current;
                         let newSVG = newSVGObjectRef.current.contentDocument.rootElement.outerHTML;
-                        console.log({ newSVGObjectRef, contentDoc: newSVGObjectRef.current.contentDocument.rootElement.outerHTML });
+                        let hasError = false;
+                        let errorsArray = [];
+                        if (!newSVGObjectRef.current.contentDocument.rootElement.hasAttribute('width')) {
+                            console.log(`bisogna impostare una width per l'svg`);
+                            errorsArray = [...errorsArray, `bisogna impostare una width per l'svg`];
+                            hasError = true;
+                        }
+                        if (!newSVGObjectRef.current.contentDocument.rootElement.hasAttribute('height')) {
+                            errorsArray = [...errorsArray, `bisogna impostare una height per l'svg`];
+                            hasError = true;
+                        }
+                        newSVGObjectRef.current.contentDocument.rootElement.querySelectorAll('path').forEach(item => {
+                            if (!item.id) {
+                                // console.log('attenzione ogni path deve avere un id');
+                                errorsArray = [...errorsArray, `ogni path deve avere un id`];
+                                hasError = true;
+                            }
+                        });
+                        if (hasError) {
+                            console.log({ errorsArray });
+                            setError([...error, ...errorsArray]);
+                            setShowPopUp(true);
+                            return false;
+                        }
+                        // console.log({ newSVGObjectRef, contentDoc: newSVGObjectRef.current.contentDocument.rootElement.outerHTML });
                         newSVG = newSVG.replaceAll('path-1', `path-${newName}`);
-                        console.log({ newSVG });
-                        // const { key } = await runMutation({
-                        //     name: newName,
-                        //     code: newSVG,
-                        //     created_at: firebase.database.ServerValue.TIMESTAMP,
-                        //     updated_at: firebase.database.ServerValue.TIMESTAMP
-                        // });
+                        // console.log({ newSVG });
+                        const { key } = await runMutation({
+                            name: newName,
+                            code: newSVG,
+                            created_at: firebase.database.ServerValue.TIMESTAMP,
+                            updated_at: firebase.database.ServerValue.TIMESTAMP
+                        });
                         // console.log({ key });
-                        // newNameTextFieldRef.current.value = "";
-                        // newSVGObjectRef.current.value = "";
-                        // setFiles([]);
+                        newNameTextFieldRef.current.value = "";
+                        newSVGObjectRef.current.value = "";
+                        setFiles([]);
                     }}
                 >
                     <div>
