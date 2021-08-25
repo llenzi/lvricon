@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-// import firebase from "firebase/app";
+import firebase from "firebase/app";
 import "firebase/database";
 import { FirebaseDatabaseMutation } from "@react-firebase/database";
 import { useDropzone } from 'react-dropzone';
