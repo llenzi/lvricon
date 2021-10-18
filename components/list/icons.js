@@ -17,11 +17,25 @@ const ListIcons = props => {
 
     const [showPopUp, setShowPopUp] = useState(false);
     const [selectIcon, setSelectIcon] = useState(null);
+    const [canExport, setCanExport] = useState(false);
 
     const onClickIcon = ({ name, value }) => {
         setShowPopUp(true);
         setSelectIcon({ name, value })
     };
+
+    const bulkExport = (icons) => {
+        var iconsExport = {};
+        icons.map(({ name, code }) => {
+            name = name.replace('@2x', '');
+
+            iconsExport[name] = code;
+        })
+        console.log({ icons, iconsExport });
+        window.iconsExport = iconsExport;
+        const exportIcons = JSON.stringify(iconsExport);
+        navigator.clipboard.writeText(exportIcons)
+    }
 
     return <IfFirebaseAuthedAnd
         filter={({ providerId, user }) => {
@@ -56,21 +70,36 @@ const ListIcons = props => {
                                     const values = Object.values(value);
                                     console.log({ keys, values });
                                     // return <div />
-                                    return values.map((val, i) => {
-                                        const { name, code } = val || {}
-                                        if (!!name) {
-                                            return <Icon
-                                                iconId={keys[i]}
-                                                key={name}
-                                                name={name}
-                                                value={code}
-                                                onButtonClick={onClickIcon}
-                                                isEdit={canAdd}
-                                            />
-                                        } else {
-                                            return <div />
-                                        }
-                                    });
+
+                                    return (
+                                        <>
+                                            {canExport && <div className="flex flex-row flex-wrap justify-center">
+                                                <div className="bulk-export flex flex-col bg-gray-300 rounded m-4 p-2 align-middle justify-between border border-gray-900 text-center w-full">
+                                                    <h2 className="pb-2">Bulk Export HTML</h2>
+                                                    <button onClick={() => { bulkExport(values) }} className="px-10 py-2 border rounded text-white border-gray-900 bg-gray-800 text-sm">
+                                                        Export
+                                                    </button>
+                                                </div>
+                                            </div>}
+                                            <div className="flex flex-row flex-wrap justify-center">
+                                                {values.map((val, i) => {
+                                                    const { name, code } = val || {}
+                                                    if (!!name) {
+                                                        return <Icon
+                                                            iconId={keys[i]}
+                                                            key={name}
+                                                            name={name}
+                                                            value={code}
+                                                            onButtonClick={onClickIcon}
+                                                            isEdit={canAdd}
+                                                        />
+                                                    } else {
+                                                        return <div />
+                                                    }
+                                                })}
+                                            </div>
+                                        </>
+                                    );
                                 }}
                             </FirebaseDatabaseNode>
                             <>{canAdd && <Add />}</>

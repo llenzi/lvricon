@@ -28,7 +28,7 @@ const Notification = props => {
 
     return (
         <Portal>
-            <>
+            <div className="fixed inset-0">
                 <div className="overlay h-full w-full bg-black opacity-50 absolute inset-0 z-20" />
                 <div className="absolute rounded inset-0 flex flex-col align-middle justify-start content-center h-full z-30 m-4">
                     <div role="alert">
@@ -49,7 +49,7 @@ const Notification = props => {
                         </div>
                     </div>
                 </div>
-            </>
+            </div>
         </Portal>
     )
 }
