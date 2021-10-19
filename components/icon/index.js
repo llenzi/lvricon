@@ -30,7 +30,7 @@ const Icon = props => {
 
     return <div className={classContainer}>
         <div className={classTitle}>
-            <h4 className="font-medium">{name}</h4>
+            <h4 className="font-medium truncate">{name}</h4>
             {isFull && <button onClick={_onClose} className="px-2 py-1 border rounded-full text-xs">✕</button>}
         </div>
         <div className={classPreview}>
