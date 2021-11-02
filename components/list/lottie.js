@@ -48,7 +48,6 @@ const ListLottie = props => {
                             <FirebaseDatabaseNode
                                 path="lottie/"
                                 orderByKey
-                                limitToFirst={3}
                             // orderByValue={"created_on"}
                             >
                                 {({ value }) => {
