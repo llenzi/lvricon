@@ -4,6 +4,40 @@ import "firebase/database";
 import { FirebaseDatabaseMutation } from "@react-firebase/database";
 import { useDropzone } from 'react-dropzone';
 import Notification from "@/components/popup/notification";
+import uploadFileRequest from "@/components/axios";
+import axios from 'axios';
+
+const handleSend = async (data) => {
+    // Send the data to the server in JSON format.
+    const body = new FormData();
+    body.append("file", data);
+
+    // API endpoint where we send form data.
+    const endpoint = '/api/form'
+
+    // Form the request for sending data to the server.
+    const options = {
+        // The method is POST because we are sending data.
+        method: 'POST',
+        // Tell the server we're sending JSON.
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        // Body of the request is the JSON data we created above.
+        body
+    }
+
+    // Send the form data to our forms API on Vercel and get a response.
+    const response = await fetch(endpoint, options)
+
+    // Get the response data from server as JSON.
+    // If server returns the name submitted, that means the form works.
+    if (!response.ok) {
+        throw new Error(response.statusText)
+    }
+    const result = await response.json()
+    console.log({ result });
+}
 
 const Add = props => {
     const newNameTextFieldRef = useRef(null);
@@ -18,17 +52,33 @@ const Add = props => {
         getRootProps,
         getInputProps
     } = useDropzone({
-        accept: 'image/svg+xml',
+        accept: 'image/png, image/jpeg, image/svg+xml',
         onDrop: acceptedFiles => {
-            setFiles(acceptedFiles.map(file => {
-                // console.log({ file, url: URL.createObjectURL(file), filename: file.name });
-                const fileName = file.name.replace('.svg', '');
-                // console.log({ fileName });
-                return Object.assign(file, {
-                    preview: URL.createObjectURL(file),
-                    fileName: fileName
-                })
-            }));
+
+            // const { name, file } = file;
+            // console.log({ formData });
+            // uploadFileRequest(formData, (progress) => {
+            //     console.log(`Current progress:`, Math.round((progress.loaded * 100) / progress.total))
+            // })
+
+            console.log({ acceptedFiles, primo: acceptedFiles[0] });
+
+            handleSend(acceptedFiles[0]);
+
+            // axios
+            //     .post("/api/upload_svg", formData)
+            //     .then((res) => console.log(res))
+            //     .catch((err) => console.log(err));
+
+            // setFiles(acceptedFiles.map(file => {
+            //     console.log({ file, url: URL.createObjectURL(file), filename: file.name });
+            //     const fileName = file.name.replace('.svg', '');
+            //     console.log({ fileName });
+            //     return Object.assign(file, {
+            //         preview: URL.createObjectURL(file),
+            //         fileName: fileName
+            //     })
+            // }));
         }
     });
 
@@ -42,7 +92,7 @@ const Add = props => {
                     errors={[...new Set(error)]}
                     text="sono stati riscontrati i seguenti errori e il caricamento non verrà effettuato (si consiglia di vedere gli altri SVG come sono stati realizzati):"
                     type="warning"
-                    onClose={() => { 
+                    onClose={() => {
                         newNameTextFieldRef.current.value = "";
                         newSVGObjectRef.current.value = "";
                         setFiles([]);
