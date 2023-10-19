@@ -23,7 +23,7 @@ const Home = () => {
         </Head>
         <div className="mx-auto">
           <Header />
-          <ListIcons canAdd={false} />
+          <ListIcons path="icons/" canAdd={false} />
           <Footer />
 
         </div>

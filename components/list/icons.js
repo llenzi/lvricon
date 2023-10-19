@@ -1,4 +1,5 @@
 import { useState } from "react";
+import dynamic from 'next/dynamic'
 import firebase from "firebase/app";
 import config from "../../config";
 import {
@@ -11,13 +12,19 @@ import {
 import Add from '@/components/add';
 import Icon from "@/components/icon";
 import PopUp from "@/components/popup";
+// import Save from "@/components/save";
+
+const IconFontButton = dynamic(() => import('../save/buttonSave'), {
+    ssr: false,
+})
 
 const ListIcons = props => {
-    const { canAdd } = props;
+    const { canAdd, path = "icons/" } = props;
 
     const [showPopUp, setShowPopUp] = useState(false);
     const [selectIcon, setSelectIcon] = useState(null);
     const [canExport, setCanExport] = useState(false);
+    const [canExportWebFont, setCanExportWebFont] = useState(true);
 
     const onClickIcon = ({ name, value }) => {
         setShowPopUp(true);
@@ -31,11 +38,12 @@ const ListIcons = props => {
 
             iconsExport[name] = code;
         })
-        console.log({ icons, iconsExport });
+        // console.log({ icons, iconsExport });
         window.iconsExport = iconsExport;
         const exportIcons = JSON.stringify(iconsExport);
         navigator.clipboard.writeText(exportIcons)
     }
+
 
     return <IfFirebaseAuthedAnd
         filter={({ providerId, user }) => {
@@ -60,16 +68,13 @@ const ListIcons = props => {
                     {isSignedIn && <>
                         <FirebaseDatabaseProvider firebase={firebase} {...config}>
                             <FirebaseDatabaseNode
-                                path="icons/"
+                                path={path}
                                 orderByKey
-                            // orderByValue={"created_on"}
                             >
                                 {({ value }) => {
                                     if (value === null || typeof value === "undefined") return null;
                                     const keys = Object.keys(value);
                                     const values = Object.values(value);
-                                    console.log({ keys, values });
-                                    // return <div />
 
                                     return (
                                         <>
@@ -81,8 +86,11 @@ const ListIcons = props => {
                                                     </button>
                                                 </div>
                                             </div>}
-                                            <div className="flex flex-row flex-wrap justify-center">
+                                            {/* {canExportWebFont && <Save values={values} />} */}
+                                            {canExportWebFont && <IconFontButton icons={values} />}
+                                            <div className="flex flex-row flex-wrap justify-center w-full">
                                                 {values.map((val, i) => {
+                                                    console.log({ val })
                                                     const { name, code } = val || {}
                                                     if (!!name) {
                                                         return <Icon

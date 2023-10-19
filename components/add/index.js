@@ -4,43 +4,15 @@ import "firebase/database";
 import { FirebaseDatabaseMutation } from "@react-firebase/database";
 import { useDropzone } from 'react-dropzone';
 import Notification from "@/components/popup/notification";
-import uploadFileRequest from "@/components/axios";
-import axios from 'axios';
+import 'firebase/storage';
 
-const handleSend = async (data) => {
-    // Send the data to the server in JSON format.
-    const body = new FormData();
-    body.append("file", data);
+const Add = ({ iconType }) => {
 
-    // API endpoint where we send form data.
-    const endpoint = '/api/form'
+    const isApp = iconType === 'app';
+    const pathToPush = isApp ? "icons" : "web/icons";
 
-    // Form the request for sending data to the server.
-    const options = {
-        // The method is POST because we are sending data.
-        method: 'POST',
-        // Tell the server we're sending JSON.
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        // Body of the request is the JSON data we created above.
-        body
-    }
-
-    // Send the form data to our forms API on Vercel and get a response.
-    const response = await fetch(endpoint, options)
-
-    // Get the response data from server as JSON.
-    // If server returns the name submitted, that means the form works.
-    if (!response.ok) {
-        throw new Error(response.statusText)
-    }
-    const result = await response.json()
-    console.log({ result });
-}
-
-const Add = props => {
     const newNameTextFieldRef = useRef(null);
+    const newUrlRef = useRef(null);
     // const newSGVTextFieldRef = useRef(null);
     const newSVGObjectRef = useRef(null);
     const [files, setFiles] = useState([]);
@@ -48,43 +20,57 @@ const Add = props => {
     const [showPopUp, setShowPopUp] = useState(false);
     const [error, setError] = useState([]);
 
+
+    const [svgUrl, setSvgUrl] = useState(null);
+    const [progresspercent, setProgresspercent] = useState(0);
+
     const {
         getRootProps,
         getInputProps
     } = useDropzone({
-        accept: 'image/png, image/jpeg, image/svg+xml',
+        accept: 'image/svg+xml',
         onDrop: acceptedFiles => {
 
-            // const { name, file } = file;
-            // console.log({ formData });
-            // uploadFileRequest(formData, (progress) => {
-            //     console.log(`Current progress:`, Math.round((progress.loaded * 100) / progress.total))
-            // })
+            const file = acceptedFiles[0];
+            if (!file) return;
 
-            console.log({ acceptedFiles, primo: acceptedFiles[0] });
+            const storage = firebase.storage();
+            const storageRef = storage.ref();
+            const spaceRef = storageRef.child(`icons/${file.name}`);
+            const uploadTask = spaceRef.put(file);
 
-            handleSend(acceptedFiles[0]);
+            uploadTask.on("state_changed",
+                (snapshot) => {
+                    const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                    setProgresspercent(progress);
+                },
+                (error) => {
+                    alert(error);
+                },
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        setSvgUrl(downloadURL)
 
-            // axios
-            //     .post("/api/upload_svg", formData)
-            //     .then((res) => console.log(res))
-            //     .catch((err) => console.log(err));
+                        setFiles(acceptedFiles.map(_ => {
+                            const fileName = _.name.replace('.svg', '');
+                            console.log({ _, fileName, downloadURL });
+                            return Object.assign(_, {
+                                preview: URL.createObjectURL(_),
+                                fileName: fileName,
+                                url: downloadURL
+                            })
+                        }));
 
-            // setFiles(acceptedFiles.map(file => {
-            //     console.log({ file, url: URL.createObjectURL(file), filename: file.name });
-            //     const fileName = file.name.replace('.svg', '');
-            //     console.log({ fileName });
-            //     return Object.assign(file, {
-            //         preview: URL.createObjectURL(file),
-            //         fileName: fileName
-            //     })
-            // }));
+
+                    });
+                }
+            );
         }
     });
 
     const thumbs = files.map(file => {
-        const { preview, fileName, name } = file;
-        console.log({ error });
+        const { preview, fileName, name, url } = file;
+        console.log({ error, svgUrl });
         return (
             <div key={name}>
                 {showPopUp && <Notification
@@ -109,10 +95,20 @@ const Add = props => {
                         placeholder="Name"
                         value={fileName}
                         ref={newNameTextFieldRef} />
+                    <input
+                        readOnly
+                        id="name"
+                        className="hidden"
+                        label="url"
+                        aria-label="url"
+                        placeholder="Url"
+                        value={url}
+                        ref={newUrlRef} />
                 </div>
                 <aside className="h-full flex flex-col justify-center">
-                    <div className="mx-auto my-2">
+                    <div className="mx-auto my-2 mb-6">
                         <object ref={newSVGObjectRef} className="uploadSVG mx-auto" id={fileName} data={preview} type="image/svg+xml" />
+                        {/* {!isApp && svgUrl && <img className="uploadSVG" src={svgUrl} alt={fileName} />} */}
                     </div>
                 </aside>
             </div>
@@ -124,23 +120,24 @@ const Add = props => {
         files.forEach(file => URL.revokeObjectURL(file.preview));
     }, [files]);
 
-    console.log({ filessss: files })
-
     return <div
         className="add flex flex-col bg-gray-50 rounded m-4 align-middle justify-between border border-gray-300 text-center w-2/12 h-auto"
     >
         {!thumbs.length && <div {...getRootProps({ className: 'dropzone m-1 flex flex-col justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md h-full content-center' })}>
             <input {...getInputProps()} />
-            <p>Drag 'n' drop some files here, or click to select files</p>
+            {!progresspercent && <p>Drag 'n' drop some files here, or click to select files</p>}
+            {!!progresspercent && <p>{progresspercent}%</p>}
         </div>}
         {thumbs && <>{thumbs}</>}
-        <FirebaseDatabaseMutation type="push" path="icons">
+        <FirebaseDatabaseMutation type="push" path={pathToPush}>
             {({ runMutation }) => (
                 <form
                     onSubmit={async ev => {
                         ev.preventDefault();
+                        // console.log({ files })
                         // console.log({name: newNameTextFieldRef.current.value, svg: newSGVTextFieldRef.current.value});
                         const newName = newNameTextFieldRef.current.value;
+                        const url = newUrlRef.current.value;
                         // let newSVG = newSGVTextFieldRef.current.value;
                         window.xsxs = newSVGObjectRef.current;
                         let newSVG = newSVGObjectRef.current.contentDocument.rootElement.outerHTML;
@@ -175,7 +172,8 @@ const Add = props => {
                             name: newName,
                             code: newSVG,
                             created_at: firebase.database.ServerValue.TIMESTAMP,
-                            updated_at: firebase.database.ServerValue.TIMESTAMP
+                            updated_at: firebase.database.ServerValue.TIMESTAMP,
+                            url: url
                         });
                         // console.log({ key });
                         newNameTextFieldRef.current.value = "";
